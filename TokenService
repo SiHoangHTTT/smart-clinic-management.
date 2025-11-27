@@ -1,19 +1,44 @@
-import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.security.Key;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
+
+import java.security.Key;
+import java.util.Date;
 
 @Service
 public class TokenService {
 
-    private final String secret = "my-super-secret-key-which-is-very-long";
+    // Secret key (nên lưu trong application.properties)
+    private final String secret = "my-super-secret-key-which-is-very-long-and-secure";
 
+    private final long expirationMs = 3600000; // 1 giờ
+
+    // 1. Generate JWT token using user's email
     public String generateToken(String email) {
-        return Jwts.builder().setSubject(email).signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
+    // 2. Return signing key using the secret
     public Key getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
+    // 3. Optional: validate token
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

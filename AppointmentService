@@ -1,0 +1,17 @@
+import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class AppointmentService {
+
+    public Appointment bookAppointment(Appointment appointment) {
+        // save appointment
+        return appointment;
+    }
+
+    public List<Appointment> getAppointmentsByDoctorAndDate(Long doctorId, LocalDate date) {
+        // return list of appointments
+        return List.of();
+    }
+}

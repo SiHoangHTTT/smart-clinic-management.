@@ -1,17 +1,27 @@
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class AppointmentService {
 
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    // 1. Book an appointment
     public Appointment bookAppointment(Appointment appointment) {
-        // save appointment
-        return appointment;
+        // Lưu appointment vào DB
+        return appointmentRepository.save(appointment);
     }
 
+    // 2. Get appointments for a doctor on a specific date
     public List<Appointment> getAppointmentsByDoctorAndDate(Long doctorId, LocalDate date) {
-        // return list of appointments
-        return List.of();
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+        return appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(
+                doctorId, startOfDay, endOfDay);
     }
 }

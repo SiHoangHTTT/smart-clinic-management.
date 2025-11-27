@@ -1,0 +1,14 @@
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+
+@RestController
+@RequestMapping("/doctors")
+public class DoctorController {
+    
+    @GetMapping("/availability")
+    public ResponseEntity<?> getAvailability(@RequestParam Long doctorId, @RequestHeader("Authorization") String token) {
+        // validate token
+        // return available times
+        return ResponseEntity.ok("Available times here");
+    }
+}

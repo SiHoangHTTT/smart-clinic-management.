@@ -1,0 +1,13 @@
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+
+@RestController
+@RequestMapping("/prescriptions")
+public class PrescriptionController {
+
+    @PostMapping
+    public ResponseEntity<?> savePrescription(@RequestBody Prescription prescription, @RequestHeader("Authorization") String token) {
+        // validate token and save prescription
+        return ResponseEntity.ok("Prescription saved");
+    }
+}

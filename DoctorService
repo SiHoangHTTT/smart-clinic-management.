@@ -1,0 +1,15 @@
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class DoctorService {
+
+    public List<String> getAvailableTimes(Long doctorId, String date) {
+        return List.of("09:00", "10:00", "11:00");
+    }
+
+    public boolean validateDoctorLogin(String email, String password) {
+        // return true if valid
+        return true;
+    }
+}

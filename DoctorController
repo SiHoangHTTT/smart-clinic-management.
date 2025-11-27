@@ -1,14 +1,42 @@
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/doctors")
 public class DoctorController {
-    
+
+    private final DoctorService doctorService;
+    private final TokenService tokenService;
+
+    public DoctorController(DoctorService doctorService, TokenService tokenService) {
+        this.doctorService = doctorService;
+        this.tokenService = tokenService;
+    }
+
+    // GET /doctors/availability?doctorId=1&date=2025-11-28
     @GetMapping("/availability")
-    public ResponseEntity<?> getAvailability(@RequestParam Long doctorId, @RequestHeader("Authorization") String token) {
-        // validate token
-        // return available times
-        return ResponseEntity.ok("Available times here");
+    public ResponseEntity<?> getDoctorAvailability(
+            @RequestParam Long doctorId,
+            @RequestParam String date,
+            @RequestHeader("Authorization") String authHeader) {
+
+        // Token validation
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7); // Remove "Bearer "
+        boolean isValid = tokenService.validateToken(token);
+        if (!isValid) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid token");
+        }
+
+        // Call service to get available times
+        List<String> availableTimes = doctorService.getAvailableTimes(doctorId, date);
+        return ResponseEntity.ok(availableTimes);
     }
 }
